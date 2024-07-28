@@ -1,6 +1,10 @@
 const incrementField = document.getElementById("increment-box");
 const decrementField = document.getElementById("decrement-box");
 const counterResult = document.getElementById("counter-result");
+const matchContainer = document.getElementById("match-container");
+const addMatch = document.getElementById("add-match");
+
+// console.log(matchContainer.innerHTML)
 
 // set initial state
 const initialState = {
@@ -75,3 +79,68 @@ decrementField.addEventListener("keydown", (e) => {
     e.target.value = "";
   }
 });
+
+
+// Load matches from local storage
+const loadMatches = () => {
+    const matches = JSON.parse(localStorage.getItem('matches')) || [];
+    matches.forEach(match => {
+      const divMatch = document.createElement('div');
+      divMatch.classList.add('match');
+      divMatch.innerHTML = match.html;
+      matchContainer.appendChild(divMatch);
+    });
+  };
+
+
+// Save matches to local storage
+const saveMatches = () => {
+    const matches = Array.from(matchContainer.getElementsByClassName('match')).map(div => ({
+      html: div.innerHTML,
+    }));
+    localStorage.setItem('matches', JSON.stringify(matches));
+  };
+  
+
+
+  addMatch.addEventListener('click', (event) => {
+    event.preventDefault();
+    const divMatch = document.createElement('div');
+    divMatch.classList.add('match');
+    divMatch.innerHTML = `
+      <div class="wrapper">
+        <button class="lws-delete">
+          <img src="./image/delete.svg" alt="" />
+        </button>
+        <h3 class="lws-matchName">Match 1</h3>
+      </div>
+      <div class="inc-dec">
+        <form class="incrementForm">
+          <h4>Increment</h4>
+          <input
+            id="increment-box"
+            type="number"
+            name="increment"
+            class="lws-increment"
+          />
+        </form>
+        <form class="decrementForm">
+          <h4>Decrement</h4>
+          <input
+            id="decrement-box"
+            type="number"
+            name="decrement"
+            class="lws-decrement"
+          />
+        </form>
+      </div>
+      <div class="numbers">
+        <h2 id="counter-result" class="lws-singleResult">120</h2>
+      </div>
+    `;
+    matchContainer.appendChild(divMatch);
+    saveMatches();
+  });
+  
+  // Load matches on page load
+window.addEventListener('load', loadMatches);
